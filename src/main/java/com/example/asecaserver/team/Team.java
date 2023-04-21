@@ -1,7 +1,9 @@
 package com.example.asecaserver.team;
 
-import com.example.asecaserver.league.League;
+import com.example.asecaserver.statistics.Statistics;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Table
@@ -13,18 +15,11 @@ public class Team {
     private Long id;
 
     private String teamName;
-    /*private Double winPercentage;
-    private Integer matchesPlayed;
-    private Integer wins;
-    private Integer losses;
-    private Double homeWinPercentage;
-    private Double awayWinPercentage;
-    private Integer last10Games;*/
 
-    @ManyToOne
-    private League league;
+    @OneToMany
+    private List<Statistics> statistics;
 
-    public Team(String teamName){
+    public Team(String teamName) {
         this.teamName = teamName;
     }
 
@@ -39,5 +34,4 @@ public class Team {
     public String getTeamName() {
         return teamName;
     }
-
 }

@@ -1,10 +1,7 @@
 package com.example.asecaserver.league;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("league")
@@ -17,8 +14,13 @@ public class LeagueController {
         this.leagueService = leagueService;
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public void createLeague(@RequestBody League league) {
         leagueService.createLeague(league);
+    }
+
+    @PostMapping("/addTeam")
+    public void addTeamToLeague(@RequestParam Long leagueId, @RequestParam Long teamId){
+        leagueService.addTeamToLeague(leagueId, teamId);
     }
 }
