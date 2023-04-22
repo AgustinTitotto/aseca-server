@@ -1,16 +1,16 @@
-package com.example.asecaserver.statistics;
+package com.example.asecaserver.model;
 
-import com.example.asecaserver.league.League;
-import com.example.asecaserver.team.Team;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 
 @Entity
-@Table
 public class Statistics {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne
@@ -26,8 +26,6 @@ public class Statistics {
     //private Double awayWinPercentage;
     private Integer last10Games;
     private Integer pointsInFavor;
-
-
 
     public Statistics() {
 

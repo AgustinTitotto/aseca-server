@@ -1,6 +1,6 @@
-package com.example.asecaserver.match;
+package com.example.asecaserver.repository;
 
-import com.example.asecaserver.team.Team;
+import com.example.asecaserver.model.Match;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
