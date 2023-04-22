@@ -1,5 +1,6 @@
 package com.example.asecaserver.controller;
 
+import com.example.asecaserver.model.dtos.MatchDto;
 import com.example.asecaserver.service.impl.MatchServiceImpl;
 import com.example.asecaserver.model.Match;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,9 @@ public class MatchController {
         this.matchServiceImpl = matchServiceImpl;
     }
 
-    @PostMapping
-    public void createMatch(@RequestBody Match match) {
-//        matchServiceImpl.createMatch(match);
+    @PostMapping("/create")
+    public Match createMatch(@RequestBody MatchDto matchDto) throws Exception{
+        return matchServiceImpl.createMatch(matchDto);
     }
+
 }

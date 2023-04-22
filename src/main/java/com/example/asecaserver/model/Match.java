@@ -6,6 +6,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 
+import java.util.Date;
+
 @Entity
 public class Match {
 
@@ -21,6 +23,8 @@ public class Match {
 
     @OneToOne
     private League league;
+
+    private Date date;
 
     private Integer localTwoPointer;
     private Integer localThreePointer;
@@ -40,6 +44,22 @@ public class Match {
 
     public Match() {
 
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public Team getLocalTeam() {
