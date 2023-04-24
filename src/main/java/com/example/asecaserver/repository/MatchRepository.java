@@ -9,9 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface MatchRepository extends JpaRepository<Match, Long> {
-
-    @Query("SELECT CASE WHEN COUNT(s) > 0 THEN TRUE ELSE FALSE END FROM Match s WHERE s.localTeam.id = ?1 AND s.awayTeam.id = ?2")
-    Boolean matchExists(Long localTeamId, Long awayTeamId);
-
     Optional<Match> findByLocalTeamIdAndAwayTeamIdAndLeagueId(Long localTeam, Long awayTeam, Long league);
 }

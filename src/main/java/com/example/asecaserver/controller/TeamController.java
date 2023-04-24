@@ -15,7 +15,7 @@ public class TeamController {
         this.service = service;
     }
 
-    @PostMapping("/get")
+    @GetMapping("/get")
     public Team findById(@PathParam("id") Long id) throws Exception{
         return service.findById(id);
     }
