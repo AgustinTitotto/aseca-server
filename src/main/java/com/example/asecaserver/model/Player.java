@@ -14,8 +14,6 @@ public class Player {
     private Long id;
 
     private String name;
-    @OneToOne
-    private Team currentTeam;
 
     private Integer twoPointers;
     private Integer threePointer;
@@ -25,9 +23,8 @@ public class Player {
 
     }
 
-    public Player(String name, Team currentTeam) {
+    public Player(String name) {
         this.name = name;
-        this.currentTeam = currentTeam;
         this.twoPointers = 0;
         this.threePointer = 0;
         this.assists = 0;

@@ -1,11 +1,14 @@
 package com.example.asecaserver.service.impl;
 
 import com.example.asecaserver.model.League;
+import com.example.asecaserver.model.Player;
 import com.example.asecaserver.repository.LeagueRepository;
 import com.example.asecaserver.model.Team;
 import com.example.asecaserver.service.LeagueService;
+import com.github.javafaker.Faker;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,10 +30,24 @@ public class LeagueServiceImpl implements LeagueService {
     }
 
     public League addLeague(League league, List<Team> teams) {
-        teamService.saveTeams(teams);
-        playerService.savePlayer(teams);
+        saveTeamAndPlayer(teams);
         league.setTeams(teams);
         return repository.save(league);
+    }
+
+    private void saveTeamAndPlayer(List<Team> teams) {
+        int playerPerTeam = 12;
+        for (Team team : teams) {
+            List<Player> players = new ArrayList<>();
+            for (int i = 0; i < playerPerTeam; i++) {
+                Faker faker = new Faker();
+                Player player = new Player(faker.name().fullName());
+                players.add(player);
+                playerService.savePlayer(player);
+            }
+            team.setPlayers(players);
+            teamService.saveTeam(team);
+        }
     }
 
     public List<Team> getTeams(Long leagueId) throws Exception {
@@ -41,22 +58,4 @@ public class LeagueServiceImpl implements LeagueService {
         else throw new Exception("League does not exist");
     }
 
-//    @Transactional
-//    public void addTeamToLeague(Long leagueId, Long teamId) {
-//        Optional<League> league = repository.findById(leagueId);
-//        Optional<Team> team = teamRepository.findById(teamId);
-//        boolean teamIsNotInLeague = true;
-//        List<Team> teams = league.get().getTeams();
-//        for (Team value : teams) {
-//            if (value.getTeamName().equals(team.get().getTeamName())) {
-//                teamIsNotInLeague = false;
-//                break;
-//            }
-//        }
-//        if (teamIsNotInLeague){
-//            league.get().getTeams().add(team.get());
-//            repository.save(league.get());
-//        }
-//
-//    }
 }

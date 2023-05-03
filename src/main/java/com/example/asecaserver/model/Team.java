@@ -17,7 +17,7 @@ public class Team {
     private String teamName;
 
     @OneToMany
-    private List<Statistics> statistics;
+    private List<Player> players;
 
     public Team(String teamName) {
         this.teamName = teamName;
@@ -31,13 +31,20 @@ public class Team {
         return id;
     }
 
+    //Para crear los equipos
     public String getTeamName() {
         return teamName;
+    }
+
+    public List<Player> getPlayers() {
+        return players;
     }
 
     public void setId(Long id) {
         this.id = id;
     }
 
-
+    public void setPlayers(List<Player> players) {
+        this.players = players;
+    }
 }

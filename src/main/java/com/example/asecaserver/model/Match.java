@@ -26,20 +26,16 @@ public class Match {
 
     private Date date;
 
-    private Integer localTwoPointer;
-    private Integer localThreePointer;
+    private Integer localScore;
 
-    private Integer awayTwoPointer;
-    private Integer awayThreePointer;
+    private Integer awayScore;
 
     public Match(Team localTeam, Team awayTeam, League league) {
         this.localTeam = localTeam;
         this.awayTeam = awayTeam;
         this.league = league;
-        this.localTwoPointer = 0;
-        this.localThreePointer = 0;
-        this.awayTwoPointer = 0;
-        this.awayThreePointer = 0;
+        this.localScore = 0;
+        this.awayScore = 0;
     }
 
     public Match() {
@@ -74,30 +70,6 @@ public class Match {
         return league;
     }
 
-    public Integer getLocalTwoPointer() {
-        return localTwoPointer;
-    }
-
-    public Integer getLocalThreePointer() {
-        return localThreePointer;
-    }
-
-    public Integer getAwayTwoPointer() {
-        return awayTwoPointer;
-    }
-
-    public Integer getAwayThreePointer() {
-        return awayThreePointer;
-    }
-
-    public Integer getLocalTotalScore() {
-        return (localTwoPointer * 2) + (localThreePointer * 3);
-    }
-
-    public Integer getAwayTotalScore() {
-        return (awayTwoPointer * 2) + (awayThreePointer * 3);
-    }
-
     public void setLocalTeam(Team localTeam) {
         this.localTeam = localTeam;
     }
@@ -108,5 +80,13 @@ public class Match {
 
     public void setLeague(League league) {
         this.league = league;
+    }
+
+    public void setLocalScore(Integer localScore) {
+        this.localScore = localScore;
+    }
+
+    public void setAwayScore(Integer awayScore) {
+        this.awayScore = awayScore;
     }
 }
