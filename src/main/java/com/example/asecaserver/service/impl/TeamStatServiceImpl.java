@@ -2,12 +2,13 @@ package com.example.asecaserver.service.impl;
 
 import com.example.asecaserver.model.TeamStat;
 import com.example.asecaserver.repository.TeamStatRepository;
+import com.example.asecaserver.service.TeamStatService;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-public class TeamStatServiceImpl {
+public class TeamStatServiceImpl implements TeamStatService {
 
     private final TeamStatRepository repository;
 

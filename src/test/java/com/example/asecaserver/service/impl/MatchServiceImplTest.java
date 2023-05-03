@@ -1,14 +1,9 @@
 package com.example.asecaserver.service.impl;
 
-import com.example.asecaserver.model.League;
-import com.example.asecaserver.model.Match;
-import com.example.asecaserver.model.Player;
-import com.example.asecaserver.model.Team;
+import com.example.asecaserver.model.*;
 import com.example.asecaserver.model.dtos.MatchDto;
-import com.example.asecaserver.repository.LeagueRepository;
-import com.example.asecaserver.repository.MatchRepository;
-import com.example.asecaserver.repository.PlayerRepository;
-import com.example.asecaserver.repository.TeamRepository;
+import com.example.asecaserver.repository.*;
+import com.example.asecaserver.service.TeamStatService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +28,10 @@ class MatchServiceImplTest {
     private TeamRepository teamRepository;
     @Mock
     private PlayerRepository playerRepository;
+    @Mock
+    private TeamStatRepository teamStatRepository;
+    @Mock
+    private PlayerStatRepository playerStatRepository;
 
     private MatchServiceImpl underTest;
 
@@ -41,7 +40,9 @@ class MatchServiceImplTest {
         TeamServiceImpl teamService = new TeamServiceImpl(teamRepository);
         PlayerServiceImpl playerService = new PlayerServiceImpl(playerRepository);
         LeagueServiceImpl leagueService = new LeagueServiceImpl(leagueRepository, teamService, playerService);
-        underTest = new MatchServiceImpl(matchRepository, leagueService, teamService);
+        TeamStatServiceImpl teamStatService = new TeamStatServiceImpl(teamStatRepository);
+        PlayerStatServiceImpl playerStatService = new PlayerStatServiceImpl(playerStatRepository, playerService);
+        underTest = new MatchServiceImpl(matchRepository, leagueService, teamService, teamStatService, playerStatService);
     }
 
     @Test

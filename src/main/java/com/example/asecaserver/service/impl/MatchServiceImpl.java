@@ -16,12 +16,14 @@ public class MatchServiceImpl implements MatchService {
     private final LeagueServiceImpl leagueService;
     private final TeamServiceImpl teamService;
     private final TeamStatServiceImpl statisticsService;
+    private final PlayerStatServiceImpl playerStatService;
 
-    public MatchServiceImpl(MatchRepository repository, LeagueServiceImpl leagueService, TeamServiceImpl teamService, TeamStatServiceImpl statisticsService) {
+    public MatchServiceImpl(MatchRepository repository, LeagueServiceImpl leagueService, TeamServiceImpl teamService, TeamStatServiceImpl statisticsService, PlayerStatServiceImpl playerStatService) {
         this.repository = repository;
         this.leagueService = leagueService;
         this.teamService = teamService;
         this.statisticsService = statisticsService;
+        this.playerStatService = playerStatService;
     }
 
     public Match createMatch(MatchDto matchDto) throws Exception {
@@ -47,29 +49,12 @@ public class MatchServiceImpl implements MatchService {
     //set points in favour
     public void endMatch(Long matchId, List<Point> points) throws Exception {
         Optional<Match> match = repository.findById(matchId);
-        if (match.isPresent()) {
+        if (match.isPresent() && !match.get().hasEnded()) {
             League league = match.get().getLeague();
             Team local = match.get().getLocalTeam();
             Team away = match.get().getAwayTeam();
-            TeamStat localStats;
-            TeamStat awayStats;
-            if (statisticsService.getStatByLeagueIdAndTeamId(league.getId(), local.getId()).isEmpty()) {
-                localStats = new TeamStat();
-                localStats.setTeam(local);
-                localStats.setLeague(league);
-            }
-            else {
-                localStats = statisticsService.getStatByLeagueIdAndTeamId(league.getId(), local.getId()).get();
-            }
-            if (statisticsService.getStatByLeagueIdAndTeamId(league.getId(), away.getId()).isEmpty()) {
-                awayStats = new TeamStat();
-                awayStats.setTeam(away);
-                awayStats.setLeague(league);
-            }
-            else {
-                awayStats = statisticsService.getStatByLeagueIdAndTeamId(league.getId(), away.getId()).get();
-            }
-
+            TeamStat localStats = getTeamStat(league, local);
+            TeamStat awayStats = getTeamStat(league, away);
 
             //add 1 game to each team
             localStats.setMatchesPlayed(localStats.getMatchesPlayed() + 1);
@@ -77,17 +62,19 @@ public class MatchServiceImpl implements MatchService {
 
             int localPoints = 0;
             int awayPoints = 0;
-            for (int i = 0; i < points.size(); i++) {
-                if (points.get(i).getTeam().longValue() == local.getId().longValue()) {
-                    localPoints = localPoints + points.get(i).getScore();
-                }
-                else if (points.get(i).getTeam().longValue() == away.getId().longValue()) {
-                    awayPoints = awayPoints + points.get(i).getScore();
-                }
-                else throw new Exception("Team that scored is not in match");
+            for (Point point : points) {
+                playerStatService.addPlayerStat(point, league);
+                if (point.getTeam().longValue() == local.getId().longValue()) {
+                    localPoints = localPoints + point.getScore();
+                } else if (point.getTeam().longValue() == away.getId().longValue()) {
+                    awayPoints = awayPoints + point.getScore();
+                } else throw new Exception("Team that scored is not in match");
             }
+
             match.get().setLocalScore(localPoints);
             match.get().setAwayScore(awayPoints);
+            match.get().setHasEnded(true);
+            //repository.save(match.get());
 
             //set wins and losses and set winSteak (Depends on who wins)
             if (localPoints > awayPoints) {
@@ -116,8 +103,21 @@ public class MatchServiceImpl implements MatchService {
 
             statisticsService.saveStat(localStats);
             statisticsService.saveStat(awayStats);
-
         }
-        else throw new Exception("Match does not exist");
+        else throw new Exception("Match does not exist or has already ended");
+    }
+
+    private TeamStat getTeamStat(League league, Team local) {
+        TeamStat localStats;
+
+        if (statisticsService.getStatByLeagueIdAndTeamId(league.getId(), local.getId()).isEmpty()) {
+            localStats = new TeamStat();
+            localStats.setTeam(local);
+            localStats.setLeague(league);
+        }
+        else {
+            localStats = statisticsService.getStatByLeagueIdAndTeamId(league.getId(), local.getId()).get();
+        }
+        return localStats;
     }
 }

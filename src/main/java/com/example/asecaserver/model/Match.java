@@ -25,10 +25,9 @@ public class Match {
     private League league;
 
     private Date date;
-
     private Integer localScore;
-
     private Integer awayScore;
+    private boolean hasEnded;
 
     public Match(Team localTeam, Team awayTeam, League league) {
         this.localTeam = localTeam;
@@ -36,6 +35,7 @@ public class Match {
         this.league = league;
         this.localScore = 0;
         this.awayScore = 0;
+        this.hasEnded = false;
     }
 
     public Match() {
@@ -88,5 +88,13 @@ public class Match {
 
     public void setAwayScore(Integer awayScore) {
         this.awayScore = awayScore;
+    }
+
+    public boolean hasEnded() {
+        return hasEnded;
+    }
+
+    public void setHasEnded(boolean hasEnded) {
+        this.hasEnded = hasEnded;
     }
 }
