@@ -34,4 +34,10 @@ public class Team {
     public String getTeamName() {
         return teamName;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+
 }

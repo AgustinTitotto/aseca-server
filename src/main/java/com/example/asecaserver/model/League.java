@@ -19,14 +19,12 @@ public class League {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String leagueName;
-    private Integer maxTeams;
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<Team> teams = new ArrayList<>();
 
-    public League(String leagueName, Integer maxTeams) {
+    public League(String leagueName) {
         this.leagueName = leagueName;
-        this.maxTeams = maxTeams;
     }
 
     public League() {
@@ -41,11 +39,11 @@ public class League {
         return leagueName;
     }
 
-    public Integer getMaxTeams() {
-        return maxTeams;
-    }
-
     public List<Team> getTeams() {
         return teams;
+    }
+
+    public void setTeams(List<Team> teams) {
+        this.teams = teams;
     }
 }

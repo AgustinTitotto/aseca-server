@@ -3,13 +3,10 @@ package com.example.asecaserver.service.impl;
 import com.example.asecaserver.model.League;
 import com.example.asecaserver.repository.LeagueRepository;
 import com.example.asecaserver.model.Team;
-import com.example.asecaserver.repository.TeamRepository;
 import com.example.asecaserver.service.LeagueService;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class LeagueServiceImpl implements LeagueService {
@@ -24,7 +21,8 @@ public class LeagueServiceImpl implements LeagueService {
         return repository.findById(id).orElseThrow(() -> new Exception("No league exists with id: " + id));
     }
 
-    public League addLeague(League league) {
+    public League addLeague(League league, List<Team> teams) {
+        league.setTeams(teams);
         return repository.save(league);
     }
 

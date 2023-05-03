@@ -6,6 +6,8 @@ import com.example.asecaserver.service.TeamService;
 import com.example.asecaserver.validator.TeamValidator;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class TeamServiceImpl implements TeamService {
@@ -32,8 +34,7 @@ public class TeamServiceImpl implements TeamService {
         return team;
     }
 
-    public void addPlayerToTeam(){
-
+    public void saveTeams(List<Team> teams) {
+        repository.saveAll(teams);
     }
-
 }

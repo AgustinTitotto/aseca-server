@@ -13,12 +13,24 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String name;
     @OneToOne
     private Team currentTeam;
 
     private Integer twoPointers;
     private Integer threePointer;
+    private Integer assists;
 
+    public Player() {
 
+    }
+
+    public Player(String name, Team currentTeam) {
+        this.name = name;
+        this.currentTeam = currentTeam;
+        this.twoPointers = 0;
+        this.threePointer = 0;
+        this.assists = 0;
+    }
 
 }
