@@ -17,13 +17,10 @@ import java.util.List;
 public class LeagueController {
 
     private final LeagueServiceImpl leagueService;
-    private final TeamServiceImpl teamService;
-    private final PlayerServiceImpl playerService;
 
-    public LeagueController(LeagueServiceImpl leagueService, TeamServiceImpl teamService, PlayerServiceImpl playerService) {
+    public LeagueController(LeagueServiceImpl leagueService) {
         this.leagueService = leagueService;
-        this.teamService = teamService;
-        this.playerService = playerService;
+
     }
 
     @GetMapping
@@ -33,9 +30,12 @@ public class LeagueController {
 
     @PostMapping("/add")
     public League addLeague(@RequestBody CreateLeagueDto createLeagueDto) {
-        teamService.saveTeams(createLeagueDto.getTeams());
-        playerService.savePlayer(createLeagueDto.getTeams());
         return leagueService.addLeague(createLeagueDto.getLeague(), createLeagueDto.getTeams());
+    }
+
+    @GetMapping("/getTeams")
+    public List<Team> getTeams(@RequestBody Long leagueId) throws Exception {
+        return leagueService.getTeams(leagueId);
     }
 
 //    @GetMapping

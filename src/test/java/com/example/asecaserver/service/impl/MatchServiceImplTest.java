@@ -2,10 +2,12 @@ package com.example.asecaserver.service.impl;
 
 import com.example.asecaserver.model.League;
 import com.example.asecaserver.model.Match;
+import com.example.asecaserver.model.Player;
 import com.example.asecaserver.model.Team;
 import com.example.asecaserver.model.dtos.MatchDto;
 import com.example.asecaserver.repository.LeagueRepository;
 import com.example.asecaserver.repository.MatchRepository;
+import com.example.asecaserver.repository.PlayerRepository;
 import com.example.asecaserver.repository.TeamRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,15 +31,17 @@ class MatchServiceImplTest {
     private LeagueRepository leagueRepository;
     @Mock
     private TeamRepository teamRepository;
-
+    @Mock
+    private PlayerRepository playerRepository;
 
     private MatchServiceImpl underTest;
-    private LeagueServiceImpl leagueService;
-    private TeamServiceImpl teamService;
 
     @BeforeEach
     void setUp() {
-        underTest = new MatchServiceImpl(matchRepository, new LeagueServiceImpl(leagueRepository), new TeamServiceImpl(teamRepository));
+        TeamServiceImpl teamService = new TeamServiceImpl(teamRepository);
+        PlayerServiceImpl playerService = new PlayerServiceImpl(playerRepository);
+        LeagueServiceImpl leagueService = new LeagueServiceImpl(leagueRepository, teamService, playerService);
+        underTest = new MatchServiceImpl(matchRepository, leagueService, teamService);
     }
 
     @Test

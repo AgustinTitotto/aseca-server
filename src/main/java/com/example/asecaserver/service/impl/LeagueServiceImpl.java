@@ -7,14 +7,19 @@ import com.example.asecaserver.service.LeagueService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LeagueServiceImpl implements LeagueService {
 
     private final LeagueRepository repository;
+    private final TeamServiceImpl teamService;
+    private final PlayerServiceImpl playerService;
 
-    public LeagueServiceImpl(LeagueRepository repository) {
+    public LeagueServiceImpl(LeagueRepository repository, TeamServiceImpl teamService, PlayerServiceImpl playerService) {
         this.repository = repository;
+        this.teamService = teamService;
+        this.playerService = playerService;
     }
 
     public League findById(Long id) throws Exception {
@@ -22,8 +27,18 @@ public class LeagueServiceImpl implements LeagueService {
     }
 
     public League addLeague(League league, List<Team> teams) {
+        teamService.saveTeams(teams);
+        playerService.savePlayer(teams);
         league.setTeams(teams);
         return repository.save(league);
+    }
+
+    public List<Team> getTeams(Long leagueId) throws Exception {
+        Optional<League> league = repository.findById(leagueId);
+        if (league.isPresent()){
+            return league.get().getTeams();
+        }
+        else throw new Exception("League does not exist");
     }
 
 //    @Transactional
