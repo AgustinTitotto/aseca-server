@@ -5,6 +5,7 @@ import com.example.asecaserver.repository.TeamStatRepository;
 import com.example.asecaserver.service.TeamStatService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,5 +23,9 @@ public class TeamStatServiceImpl implements TeamStatService {
 
     public void saveStat(TeamStat localStats) {
         repository.save(localStats);
+    }
+
+    public List<TeamStat> getLeagueTable(Long leagueId) {
+        return repository.findAllByLeagueId(leagueId);
     }
 }
