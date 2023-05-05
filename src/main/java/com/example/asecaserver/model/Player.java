@@ -15,19 +15,12 @@ public class Player {
 
     private String name;
 
-    private Integer twoPointers;
-    private Integer threePointer;
-    private Integer assists;
-
     public Player() {
 
     }
 
     public Player(String name) {
         this.name = name;
-        this.twoPointers = 0;
-        this.threePointer = 0;
-        this.assists = 0;
     }
 
 }

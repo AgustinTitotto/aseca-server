@@ -23,7 +23,7 @@ public class LeagueController {
 
     }
 
-    @GetMapping
+    @GetMapping("/get")
     public League getLeague(@PathParam("id") Long id) throws Exception{
         return leagueService.findById(id);
     }

@@ -23,15 +23,15 @@ public class TeamController {
         return teamService.findById(id);
     }
 
-    @PostMapping("/add")
-    public Team addTeam(@RequestBody Team team) {
-        return teamService.insert(team);
-    }
+//    @PostMapping("/add")
+//    public Team addTeam(@RequestBody Team team) {
+//        return teamService.insert(team);
+//    }
 
-    @PostMapping("update")
-    public Team update(@RequestBody Team team) {
-        return teamService.update(team);
-    }
+//    @PostMapping("update")
+//    public Team update(@RequestBody Team team) {
+//        return teamService.update(team);
+//    }
 
     @GetMapping("/getPlayers")
     public List<Player> getPlayers(@RequestBody Long teamId) throws Exception {
