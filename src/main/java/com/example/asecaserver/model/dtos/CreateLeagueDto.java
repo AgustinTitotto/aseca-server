@@ -4,11 +4,11 @@ import java.util.List;
 
 public class CreateLeagueDto {
 
-    String leagueName;
-    List<String> teamNames;
+    private String leagueName;
+    private List<String> teamNames;
 
-    public CreateLeagueDto(String league, List<String> teams) {
-        this.leagueName = league;
+    public CreateLeagueDto(String leagueName, List<String> teams) {
+        this.leagueName = leagueName;
         this.teamNames = teams;
     }
 

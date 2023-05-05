@@ -1,24 +1,28 @@
 package com.example.asecaserver.model.dtos;
 
-import com.example.asecaserver.model.Point;
-
 import java.util.List;
 
 public class EndMatchDto {
 
     private Long matchId;
-    private List<Point> points;
+    private Integer localScore;
+    private Integer awayScore;
 
-    public EndMatchDto(Long matchId, List<Point> points) {
+    public EndMatchDto(Long matchId, Integer localScore, Integer awayScore) {
         this.matchId = matchId;
-        this.points = points;
+        this.localScore = localScore;
+        this.awayScore = awayScore;
     }
 
     public Long getMatchId() {
         return matchId;
     }
 
-    public List<Point> getPoints() {
-        return points;
+    public Integer getLocalScore() {
+        return localScore;
+    }
+
+    public Integer getAwayScore() {
+        return awayScore;
     }
 }

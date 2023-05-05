@@ -39,7 +39,9 @@ public class Match {
     }
 
     public Match() {
-
+        this.localScore = 0;
+        this.awayScore = 0;
+        this.hasEnded = false;
     }
 
     public Long getId() {
@@ -96,5 +98,13 @@ public class Match {
 
     public void setHasEnded(boolean hasEnded) {
         this.hasEnded = hasEnded;
+    }
+
+    public Integer getLocalScore() {
+        return localScore;
+    }
+
+    public Integer getAwayScore() {
+        return awayScore;
     }
 }
