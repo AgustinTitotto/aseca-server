@@ -29,15 +29,18 @@ public class LeagueServiceImpl implements LeagueService {
         return repository.findById(id).orElseThrow(() -> new Exception("No league exists with id: " + id));
     }
 
-    public League addLeague(League league, List<Team> teams) {
-        saveTeamAndPlayer(teams);
+    public League addLeague(String leagueName, List<String> teamNames) {
+        List<Team> teams = saveTeamAndPlayer(teamNames);
+        League league = new League(leagueName);
         league.setTeams(teams);
         return repository.save(league);
     }
 
-    private void saveTeamAndPlayer(List<Team> teams) {
+    private List<Team> saveTeamAndPlayer(List<String> teamNames) {
+        List<Team> teams = new ArrayList<>();
         int playerPerTeam = 12;
-        for (Team team : teams) {
+        for (String teamName : teamNames) {
+            Team team = new Team(teamName);
             List<Player> players = new ArrayList<>();
             for (int i = 0; i < playerPerTeam; i++) {
                 Faker faker = new Faker();
@@ -45,9 +48,11 @@ public class LeagueServiceImpl implements LeagueService {
                 players.add(player);
                 playerService.savePlayer(player);
             }
+            teams.add(team);
             team.setPlayers(players);
             teamService.saveTeam(team);
         }
+        return teams;
     }
 
     public List<Team> getTeams(Long leagueId) throws Exception {
