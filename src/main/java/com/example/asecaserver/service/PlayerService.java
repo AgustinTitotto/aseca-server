@@ -4,4 +4,5 @@ import com.example.asecaserver.model.Player;
 
 public interface PlayerService {
     Player findById(Long id) throws Exception;
+    void savePlayer(Player player);
 }

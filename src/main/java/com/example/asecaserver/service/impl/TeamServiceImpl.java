@@ -27,11 +27,6 @@ public class TeamServiceImpl implements TeamService {
         return repository.findById(id).orElseThrow(() -> new Exception("No team exists with id: " + id));
     }
 
-    public Team insert(Team team) {
-        // needs validation
-        return repository.save(team);
-    }
-
     public Team update(Team team){
         // needs validation
         return team;

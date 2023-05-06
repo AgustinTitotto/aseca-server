@@ -43,15 +43,15 @@ class TeamServiceImplTest {
         assertThat(argumentCaptor.getValue()).isEqualTo(id);
     }
 
-    @Test
-    void shouldSaveSameTeamAsParameter() {
-        //given
-        Team team = new Team();
-        //when
-        underTest.insert(team);
-        //then
-        ArgumentCaptor<Team> argumentCaptor = ArgumentCaptor.forClass(Team.class);
-        verify(teamRepository).save(argumentCaptor.capture());
-        assertThat(argumentCaptor.getValue()).isEqualTo(team);
-    }
+//    @Test
+//    void shouldSaveSameTeamAsParameter() {
+//        //given
+//        Team team = new Team();
+//        //when
+//        underTest.insert(team);
+//        //then
+//        ArgumentCaptor<Team> argumentCaptor = ArgumentCaptor.forClass(Team.class);
+//        verify(teamRepository).save(argumentCaptor.capture());
+//        assertThat(argumentCaptor.getValue()).isEqualTo(team);
+//    }
 }

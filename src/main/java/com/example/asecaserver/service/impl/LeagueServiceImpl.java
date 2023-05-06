@@ -5,6 +5,8 @@ import com.example.asecaserver.model.Player;
 import com.example.asecaserver.repository.LeagueRepository;
 import com.example.asecaserver.model.Team;
 import com.example.asecaserver.service.LeagueService;
+import com.example.asecaserver.service.PlayerService;
+import com.example.asecaserver.service.TeamService;
 import com.github.javafaker.Faker;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +18,10 @@ import java.util.Optional;
 public class LeagueServiceImpl implements LeagueService {
 
     private final LeagueRepository repository;
-    private final TeamServiceImpl teamService;
-    private final PlayerServiceImpl playerService;
+    private final TeamService teamService;
+    private final PlayerService playerService;
 
-    public LeagueServiceImpl(LeagueRepository repository, TeamServiceImpl teamService, PlayerServiceImpl playerService) {
+    public LeagueServiceImpl(LeagueRepository repository, TeamService teamService, PlayerService playerService) {
         this.repository = repository;
         this.teamService = teamService;
         this.playerService = playerService;

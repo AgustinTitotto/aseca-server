@@ -22,7 +22,7 @@ public class MatchServiceImpl implements MatchService {
     private final TeamStatService teamStatService;
     private final PlayerStatService playerStatService;
 
-    public MatchServiceImpl(MatchRepository repository, LeagueServiceImpl leagueService, TeamServiceImpl teamService, TeamStatServiceImpl teamStatService, PlayerStatServiceImpl playerStatService) {
+    public MatchServiceImpl(MatchRepository repository, LeagueService leagueService, TeamService teamService, TeamStatService teamStatService, PlayerStatService playerStatService) {
         this.repository = repository;
         this.leagueService = leagueService;
         this.teamService = teamService;
@@ -45,7 +45,7 @@ public class MatchServiceImpl implements MatchService {
 
     private boolean matchAlreadyExists(Match match) {
         return repository.findByLocalTeamIdAndAwayTeamIdAndLeagueId(
-                match.getLocalTeam().getId(),
+                    match.getLocalTeam().getId(),
                 match.getAwayTeam().getId(),
                 match.getLeague().getId()
         ).isPresent();

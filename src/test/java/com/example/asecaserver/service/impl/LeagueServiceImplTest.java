@@ -4,8 +4,8 @@ import com.example.asecaserver.model.League;
 import com.example.asecaserver.model.Team;
 import com.example.asecaserver.model.dtos.CreateLeagueDto;
 import com.example.asecaserver.repository.LeagueRepository;
-import com.example.asecaserver.repository.PlayerRepository;
-import com.example.asecaserver.repository.TeamRepository;
+import com.example.asecaserver.service.PlayerService;
+import com.example.asecaserver.service.TeamService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -26,17 +27,27 @@ class LeagueServiceImplTest {
     @Mock
     private LeagueRepository leagueRepository;
     @Mock
-    private TeamRepository teamRepository;
+    private TeamService teamService;
     @Mock
-    private PlayerRepository playerRepository;
+    private PlayerService playerService;
 
     private LeagueServiceImpl underTest;
 
     @BeforeEach
     void setUp() {
-        TeamServiceImpl teamService = new TeamServiceImpl(teamRepository);
-        PlayerServiceImpl playerService = new PlayerServiceImpl(playerRepository);
         underTest = new LeagueServiceImpl(leagueRepository, teamService, playerService);
+    }
+
+    @Test
+    void shouldFindAllLeagues() {
+        //given
+        List<League> leagues = Arrays.asList(new League("NBA"), new League("NBA2"));
+        when(leagueRepository.findAll()).thenReturn(leagues);
+        //when
+        List<League> leagues1 = underTest.findAll();
+        //then
+        verify(leagueRepository).findAll();
+        assertThat(leagues1).isEqualTo(leagues);
     }
 
     @Test
@@ -54,17 +65,21 @@ class LeagueServiceImplTest {
     }
 
     @Test
-    void shouldSaveSameLeagueAsParameter() {
+    void shouldSaveLeague() {
         //given
-        String leagueName = "NBA";
+        League league = new League("NBA");
+        String leagueName = league.getLeagueName();
         String team1 = "team1";
         String team2 = "team2";
+        List<Team> teams = Arrays.asList(new Team(team1), new Team(team2));
         CreateLeagueDto createLeagueDto = new CreateLeagueDto(leagueName, Arrays.asList(team1, team2));
         //when
         underTest.addLeague(createLeagueDto.getLeague(), createLeagueDto.getTeams());
         //then
         ArgumentCaptor<League> argumentCaptor = ArgumentCaptor.forClass(League.class);
         verify(leagueRepository).save(argumentCaptor.capture());
-        assertThat(argumentCaptor.getValue()).isEqualTo(leagueName);
+        assertThat(argumentCaptor.getValue().getLeagueName()).isEqualTo(leagueName);
+        assertThat(argumentCaptor.getValue().getTeams().size()).isEqualTo(teams.size());
+        assertThat(argumentCaptor.getValue().getTeams().get(0).getPlayers().size()).isEqualTo(12);
     }
 }
