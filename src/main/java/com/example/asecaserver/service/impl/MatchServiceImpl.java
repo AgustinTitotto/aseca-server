@@ -78,6 +78,23 @@ public class MatchServiceImpl implements MatchService {
         else throw new Exception("Match does not exist or has already ended");
     }
 
+    public void addPoint(PointDto point) throws Exception {
+        Match match = findById(point.getMatchId());
+        if (!match.hasEnded()) {
+            League league = match.getLeague();
+            //Change match score
+            if (point.getTeamId().equals(match.getLocalTeam().getId())) {
+                match.setLocalScore(match.getLocalScore() + point.getScore());
+            } else if (point.getTeamId().equals(match.getAwayTeam().getId())) {
+                match.setAwayScore(match.getAwayScore() + point.getScore());
+            } else throw new Exception("Team that scored is not in match");
+            //Set player stat (score and assist)
+            playerStatService.addStatsToPlayer(point.getScoringPlayerId(), point.getScore(), point.getAssistPlayerId(), league);
+            repository.save(match);
+        }
+        else throw new Exception("Match does not exist or has already ended");
+    }
+
     private static void setWinPercentage(TeamStat localStats, TeamStat awayStats) {
         localStats.setWinPercentage((double) (localStats.getWins()/(localStats.getMatchesPlayed())));
         awayStats.setWinPercentage((double) (awayStats.getWins()/(awayStats.getMatchesPlayed())));
@@ -100,7 +117,6 @@ public class MatchServiceImpl implements MatchService {
 
             awayStats.setLosses(awayStats.getLosses() + 1);
             awayStats.setWinStreak(0);
-
         }
         else {
             localStats.setLosses(localStats.getLosses() + 1);
@@ -121,22 +137,5 @@ public class MatchServiceImpl implements MatchService {
             localStats.setLeague(league);
         }
         return localStats;
-    }
-
-    public void addPoint(PointDto point) throws Exception {
-        Match match = findById(point.getMatchId());
-        if (!match.hasEnded()) {
-            League league = match.getLeague();
-            //Change match score
-            if (point.getTeamId().longValue() == match.getLocalTeam().getId().longValue()) {
-                match.setLocalScore(match.getLocalScore() + point.getScore());
-            } else if (point.getTeamId().longValue() == match.getAwayTeam().getId().longValue()) {
-                match.setAwayScore(match.getAwayScore() + point.getScore());
-            } else throw new Exception("Team that scored is not in match");
-            //Set player stat (score and assist)
-            playerStatService.addStatsToPlayer(point.getScoringPlayerId(), point.getScore(), point.getAssistPlayerId(), league);
-            repository.save(match);
-        }
-        else throw new Exception("Match does not exist or has already ended");
     }
 }

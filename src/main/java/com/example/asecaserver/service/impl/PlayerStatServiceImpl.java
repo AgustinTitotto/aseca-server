@@ -37,6 +37,10 @@ public class PlayerStatServiceImpl implements PlayerStatService {
 
     }
 
+    public PlayerStat getPlayerStatById(Long playerId) throws Exception {
+        return repository.findByPlayerId(playerId).orElseThrow(() -> new Exception("No player stat exists with player id: " + playerId));
+    }
+
     private PlayerStat getPlayerStat(Long playerId, League league) throws Exception {
         PlayerStat playerStat;
         if (repository.findByPlayerId(playerId).isEmpty()){
@@ -46,12 +50,5 @@ public class PlayerStatServiceImpl implements PlayerStatService {
         }
         else playerStat = repository.findByPlayerId(playerId).get();
         return playerStat;
-    }
-
-    public PlayerStat getPlayerStatById(Long playerId) throws Exception {
-        if (repository.findByPlayerId(playerId).isPresent()) {
-            return repository.findByPlayerId(playerId).get();
-        }
-        else throw new Exception("Player does not exist");
     }
 }

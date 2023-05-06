@@ -2,17 +2,15 @@ package com.example.asecaserver.controller;
 
 import com.example.asecaserver.model.Team;
 import com.example.asecaserver.model.dtos.CreateLeagueDto;
-import com.example.asecaserver.service.PlayerService;
 import com.example.asecaserver.service.impl.LeagueServiceImpl;
 import com.example.asecaserver.model.League;
-import com.example.asecaserver.service.impl.PlayerServiceImpl;
-import com.example.asecaserver.service.impl.TeamServiceImpl;
 import jakarta.websocket.server.PathParam;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/league")
 public class LeagueController {
 
