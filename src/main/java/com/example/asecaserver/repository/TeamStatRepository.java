@@ -9,8 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface TeamStatRepository extends JpaRepository<TeamStat, Long> {
-
     Optional<TeamStat> findByLeagueIdAndTeamId(Long id, Long id1);
-
     List<TeamStat> findAllByLeagueId(Long leagueId);
 }

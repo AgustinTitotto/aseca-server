@@ -2,11 +2,11 @@ package com.example.asecaserver.model.dtos;
 
 public class PointDto {
 
-    private Long matchId;
-    private Long teamId;
-    private Long scoringPlayerId;
-    private Integer score;
-    private Long assistPlayerId;
+    public Long matchId;
+    public Long teamId;
+    public Long scoringPlayerId;
+    public Integer score;
+    public Long assistPlayerId;
 
     public PointDto(Long matchId, Long teamId, Long scoringPlayerId, Integer score, Long assistPlayerId) {
         this.matchId = matchId;

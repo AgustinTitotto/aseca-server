@@ -4,7 +4,11 @@ import com.example.asecaserver.model.*;
 import com.example.asecaserver.model.dtos.MatchDto;
 import com.example.asecaserver.model.dtos.PointDto;
 import com.example.asecaserver.repository.MatchRepository;
+import com.example.asecaserver.service.LeagueService;
 import com.example.asecaserver.service.MatchService;
+import com.example.asecaserver.service.PlayerStatService;
+import com.example.asecaserver.service.TeamService;
+import com.example.asecaserver.service.TeamStatService;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -13,17 +17,21 @@ import java.util.Optional;
 public class MatchServiceImpl implements MatchService {
 
     private final MatchRepository repository;
-    private final LeagueServiceImpl leagueService;
-    private final TeamServiceImpl teamService;
-    private final TeamStatServiceImpl statisticsService;
-    private final PlayerStatServiceImpl playerStatService;
+    private final LeagueService leagueService;
+    private final TeamService teamService;
+    private final TeamStatService teamStatService;
+    private final PlayerStatService playerStatService;
 
-    public MatchServiceImpl(MatchRepository repository, LeagueServiceImpl leagueService, TeamServiceImpl teamService, TeamStatServiceImpl statisticsService, PlayerStatServiceImpl playerStatService) {
+    public MatchServiceImpl(MatchRepository repository, LeagueServiceImpl leagueService, TeamServiceImpl teamService, TeamStatServiceImpl teamStatService, PlayerStatServiceImpl playerStatService) {
         this.repository = repository;
         this.leagueService = leagueService;
         this.teamService = teamService;
-        this.statisticsService = statisticsService;
+        this.teamStatService = teamStatService;
         this.playerStatService = playerStatService;
+    }
+
+    public Match findById(Long id) throws Exception {
+        return repository.findById(id).orElseThrow(() -> new Exception("No match exists with id: " + id));
     }
 
     public Match createMatch(MatchDto matchDto) throws Exception {
@@ -48,24 +56,24 @@ public class MatchServiceImpl implements MatchService {
     //set winStreak
     //set points in favour
     public void endMatch(Long matchId, Integer localScore, Integer awayScore) throws Exception {
-        Optional<Match> match = repository.findById(matchId);
-        if (match.isPresent() && !match.get().hasEnded()) {
-            League league = match.get().getLeague();
-            Team local = match.get().getLocalTeam();
-            Team away = match.get().getAwayTeam();
+        Match match = findById(matchId);
+        if (!match.hasEnded()) {
+            League league = match.getLeague();
+            Team local = match.getLocalTeam();
+            Team away = match.getAwayTeam();
             TeamStat localStats = getTeamStat(league, local);
             TeamStat awayStats = getTeamStat(league, away);
 
-            match.get().setHasEnded(true);
-            repository.save(match.get());
+            match.setHasEnded(true);
+            repository.save(match);
 
             addOneGameToTeams(localStats, awayStats);
             setWinLossAndWinStreak(localScore, awayScore, localStats, awayStats);
             setPointInFavour(localScore, awayScore, localStats, awayStats);
             setWinPercentage(localStats, awayStats);
 
-            statisticsService.saveStat(localStats);
-            statisticsService.saveStat(awayStats);
+            teamStatService.saveStat(localStats);
+            teamStatService.saveStat(awayStats);
         }
         else throw new Exception("Match does not exist or has already ended");
     }
@@ -105,31 +113,29 @@ public class MatchServiceImpl implements MatchService {
 
     private TeamStat getTeamStat(League league, Team local) {
         TeamStat localStats;
-
-        if (statisticsService.getStatByLeagueIdAndTeamId(league.getId(), local.getId()).isEmpty()) {
+        try {
+            localStats = teamStatService.getStatByLeagueIdAndTeamId(league.getId(), local.getId());
+        } catch (Exception e) {
             localStats = new TeamStat();
             localStats.setTeam(local);
             localStats.setLeague(league);
-        }
-        else {
-            localStats = statisticsService.getStatByLeagueIdAndTeamId(league.getId(), local.getId()).get();
         }
         return localStats;
     }
 
     public void addPoint(PointDto point) throws Exception {
-        Optional<Match> match = repository.findById(point.getMatchId());
-        if (match.isPresent() && !match.get().hasEnded()) {
-            League league = match.get().getLeague();
+        Match match = findById(point.getMatchId());
+        if (!match.hasEnded()) {
+            League league = match.getLeague();
             //Change match score
-            if (point.getTeamId().longValue() == match.get().getLocalTeam().getId().longValue()) {
-                match.get().setLocalScore(match.get().getLocalScore() + point.getScore());
-            } else if (point.getTeamId().longValue() == match.get().getLocalTeam().getId().longValue()) {
-                match.get().setAwayScore(match.get().getAwayScore() + point.getScore());
+            if (point.getTeamId().longValue() == match.getLocalTeam().getId().longValue()) {
+                match.setLocalScore(match.getLocalScore() + point.getScore());
+            } else if (point.getTeamId().longValue() == match.getAwayTeam().getId().longValue()) {
+                match.setAwayScore(match.getAwayScore() + point.getScore());
             } else throw new Exception("Team that scored is not in match");
             //Set player stat (score and assist)
-            playerStatService.addStatsToPlayers(point.getScoringPlayerId(), point.getScore(), point.getAssistPlayerId(), league);
-            repository.save(match.get());
+            playerStatService.addStatsToPlayer(point.getScoringPlayerId(), point.getScore(), point.getAssistPlayerId(), league);
+            repository.save(match);
         }
         else throw new Exception("Match does not exist or has already ended");
     }

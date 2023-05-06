@@ -23,9 +23,14 @@ public class LeagueController {
 
     }
 
-    @GetMapping("/get")
+    @GetMapping()
     public League getLeague(@PathParam("id") Long id) throws Exception{
         return leagueService.findById(id);
+    }
+
+    @GetMapping("/all")
+    public List<League> getLeagues() {
+        return leagueService.findAll();
     }
 
     @PostMapping("/add")
@@ -37,6 +42,8 @@ public class LeagueController {
     public List<Team> getTeams(@RequestBody Long leagueId) throws Exception {
         return leagueService.getTeams(leagueId);
     }
+
+
 
 //    @GetMapping
 //    public List<League> getLeagues() {

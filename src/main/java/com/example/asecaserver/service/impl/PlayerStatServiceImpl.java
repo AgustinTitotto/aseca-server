@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PlayerStatServiceImpl implements PlayerStatService {
 
-    private PlayerStatRepository repository;
+    private final PlayerStatRepository repository;
     private final PlayerServiceImpl playerService;
 
     public PlayerStatServiceImpl(PlayerStatRepository repository, PlayerServiceImpl playerService) {
@@ -17,7 +17,7 @@ public class PlayerStatServiceImpl implements PlayerStatService {
         this.playerService = playerService;
     }
 
-    public void addStatsToPlayers(Long scoringPlayerId, Integer score, Long assistingPLayerId, League league) throws Exception {
+    public void addStatsToPlayer(Long scoringPlayerId, Integer score, Long assistingPLayerId, League league) throws Exception {
         PlayerStat scoringPlayerStat = getPlayerStat(scoringPlayerId, league);
         if (score == 2) {
             scoringPlayerStat.setPoints2(scoringPlayerStat.getPoints2() + 1);

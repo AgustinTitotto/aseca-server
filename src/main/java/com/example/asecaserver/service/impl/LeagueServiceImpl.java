@@ -25,6 +25,10 @@ public class LeagueServiceImpl implements LeagueService {
         this.playerService = playerService;
     }
 
+    public List<League> findAll() {
+        return repository.findAll();
+    }
+
     public League findById(Long id) throws Exception {
         return repository.findById(id).orElseThrow(() -> new Exception("No league exists with id: " + id));
     }
@@ -56,11 +60,8 @@ public class LeagueServiceImpl implements LeagueService {
     }
 
     public List<Team> getTeams(Long leagueId) throws Exception {
-        Optional<League> league = repository.findById(leagueId);
-        if (league.isPresent()){
-            return league.get().getTeams();
-        }
-        else throw new Exception("League does not exist");
+        League league = findById(leagueId);
+        return league.getTeams();
     }
 
 }

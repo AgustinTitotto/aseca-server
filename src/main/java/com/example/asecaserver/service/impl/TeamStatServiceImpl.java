@@ -17,8 +17,8 @@ public class TeamStatServiceImpl implements TeamStatService {
         this.repository = repository;
     }
 
-    public Optional<TeamStat> getStatByLeagueIdAndTeamId(Long id, Long id1) {
-        return repository.findByLeagueIdAndTeamId(id, id1);
+    public TeamStat getStatByLeagueIdAndTeamId(Long id, Long id1) throws Exception {
+        return repository.findByLeagueIdAndTeamId(id, id1).orElseThrow(() -> new Exception("No team stat exists with league id: " + id + " and team id: " + id1));
     }
 
     public void saveStat(TeamStat localStats) {

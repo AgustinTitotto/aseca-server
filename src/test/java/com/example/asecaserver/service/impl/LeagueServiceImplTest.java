@@ -56,15 +56,15 @@ class LeagueServiceImplTest {
     @Test
     void shouldSaveSameLeagueAsParameter() {
         //given
-        League league = new League();
-        Team team1 = new Team();
-        Team team2 = new Team();
-        CreateLeagueDto createLeagueDto = new CreateLeagueDto(league, Arrays.asList(team1, team2));
+        String leagueName = "NBA";
+        String team1 = "team1";
+        String team2 = "team2";
+        CreateLeagueDto createLeagueDto = new CreateLeagueDto(leagueName, Arrays.asList(team1, team2));
         //when
         underTest.addLeague(createLeagueDto.getLeague(), createLeagueDto.getTeams());
         //then
         ArgumentCaptor<League> argumentCaptor = ArgumentCaptor.forClass(League.class);
         verify(leagueRepository).save(argumentCaptor.capture());
-        assertThat(argumentCaptor.getValue()).isEqualTo(league);
+        assertThat(argumentCaptor.getValue()).isEqualTo(leagueName);
     }
 }

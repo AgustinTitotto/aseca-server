@@ -1,5 +1,6 @@
 package com.example.asecaserver.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,7 +17,7 @@ public class Team {
 
     private String teamName;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Player> players;
 
     public Team(String teamName) {
