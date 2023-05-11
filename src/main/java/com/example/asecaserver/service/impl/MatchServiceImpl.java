@@ -1,6 +1,7 @@
 package com.example.asecaserver.service.impl;
 
 import com.example.asecaserver.model.*;
+import com.example.asecaserver.model.dtos.MatchDateDto;
 import com.example.asecaserver.model.dtos.MatchDto;
 import com.example.asecaserver.model.dtos.PointDto;
 import com.example.asecaserver.repository.MatchRepository;
@@ -9,10 +10,12 @@ import com.example.asecaserver.service.MatchService;
 import com.example.asecaserver.service.PlayerStatService;
 import com.example.asecaserver.service.TeamService;
 import com.example.asecaserver.service.TeamStatService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 @Service
 public class MatchServiceImpl implements MatchService {
@@ -40,6 +43,7 @@ public class MatchServiceImpl implements MatchService {
         match.setLocalTeam(teamService.findById(matchDto.getLocalTeamId()));
         match.setAwayTeam(teamService.findById(matchDto.getAwayTeamId()));
         match.setLeague(leagueService.findById(matchDto.getLeagueId()));
+        match.setDate(matchDto.getDate());
         if (matchAlreadyExists(match)) throw new Exception("This match already exists on this league");
         return repository.save(match);
     }
@@ -142,5 +146,17 @@ public class MatchServiceImpl implements MatchService {
 
     public List<Match> getLeagueMatches(Long leagueId) {
         return repository.getByLeagueId(leagueId);
+    }
+
+    @Override
+    public void createMatches(String responseLine, Long leagueId) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<MatchDateDto> jsonMap = objectMapper.readValue(responseLine, new TypeReference<List<MatchDateDto>>(){});
+        for (MatchDateDto matchDto : jsonMap) {
+            createMatch(new MatchDto(matchDto.getGameDay(), matchDto.getDate(), matchDto.getHomeTeamId(), matchDto.getAwayTeamId(), leagueId));
+        }
+//        for (Map.Entry<String,Object> entry : jsonMap.entrySet()) {
+//           // createMatch(new MatchDto(entry.ge, entry.getValue().getDate(), entry.getValue().getLocalTeamId(), entry.getValue().getAwayTeamId(), leagueId));
+//        }
     }
 }
