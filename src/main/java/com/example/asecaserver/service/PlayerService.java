@@ -2,7 +2,9 @@ package com.example.asecaserver.service;
 
 import com.example.asecaserver.model.Player;
 
+import java.util.List;
+
 public interface PlayerService {
     Player findById(Long id) throws Exception;
-    void savePlayer(Player player);
+    List<Player> savePlayers(int playerPerTeam);
 }

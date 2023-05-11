@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class MatchServiceImpl implements MatchService {
@@ -151,12 +150,9 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public void createMatches(String responseLine, Long leagueId) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        List<MatchDateDto> jsonMap = objectMapper.readValue(responseLine, new TypeReference<List<MatchDateDto>>(){});
+        List<MatchDateDto> jsonMap = objectMapper.readValue(responseLine, new TypeReference<>() {});
         for (MatchDateDto matchDto : jsonMap) {
-            createMatch(new MatchDto(matchDto.getGameDay(), matchDto.getDate(), matchDto.getHomeTeamId(), matchDto.getAwayTeamId(), leagueId));
+            createMatch(new MatchDto(matchDto.getDate(), matchDto.getHomeTeamId(), matchDto.getAwayTeamId(), leagueId));
         }
-//        for (Map.Entry<String,Object> entry : jsonMap.entrySet()) {
-//           // createMatch(new MatchDto(entry.ge, entry.getValue().getDate(), entry.getValue().getLocalTeamId(), entry.getValue().getAwayTeamId(), leagueId));
-//        }
     }
 }
