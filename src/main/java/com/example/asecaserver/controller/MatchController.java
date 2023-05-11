@@ -7,6 +7,8 @@ import com.example.asecaserver.service.impl.MatchServiceImpl;
 import com.example.asecaserver.model.Match;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -32,6 +34,11 @@ public class MatchController {
     @PostMapping("/end")
     public void endMatch(@RequestBody EndMatchDto endMatchDto) throws Exception {
         matchService.endMatch(endMatchDto.getMatchId(), endMatchDto.getLocalScore(), endMatchDto.getAwayScore());
+    }
+
+    @GetMapping("/leagueMatches")
+    public List<Match> getLeagueMatches(@RequestBody Long leagueId) {
+        return matchService.getLeagueMatches(leagueId);
     }
 
 }

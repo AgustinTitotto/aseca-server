@@ -11,6 +11,7 @@ import com.example.asecaserver.service.TeamService;
 import com.example.asecaserver.service.TeamStatService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -137,5 +138,9 @@ public class MatchServiceImpl implements MatchService {
             localStats.setLeague(league);
         }
         return localStats;
+    }
+
+    public List<Match> getLeagueMatches(Long leagueId) {
+        return repository.getByLeagueId(leagueId);
     }
 }
