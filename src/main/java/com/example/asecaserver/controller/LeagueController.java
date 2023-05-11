@@ -7,6 +7,8 @@ import com.example.asecaserver.model.League;
 import jakarta.websocket.server.PathParam;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 
 @RestController
@@ -32,8 +34,8 @@ public class LeagueController {
     }
 
     @PostMapping("/add")
-    public League addLeague(@RequestBody CreateLeagueDto createLeagueDto) {
-        return leagueService.addLeague(createLeagueDto.getLeague(), createLeagueDto.getTeams());
+    public League addLeague(@RequestBody CreateLeagueDto createLeagueDto) throws Exception {
+        return leagueService.addLeague(createLeagueDto.getLeagueName(), createLeagueDto.getTeams(), createLeagueDto.getStartDate(), createLeagueDto.getFinishDate());
     }
 
     @GetMapping("/getTeams")
