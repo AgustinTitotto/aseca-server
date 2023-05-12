@@ -5,6 +5,7 @@ import com.example.asecaserver.model.dtos.MatchDto;
 import com.example.asecaserver.model.dtos.PointDto;
 import com.example.asecaserver.service.impl.MatchServiceImpl;
 import com.example.asecaserver.model.Match;
+import jakarta.websocket.server.PathParam;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public class MatchController {
     }
 
     @GetMapping("/leagueMatches")
-    public List<Match> getLeagueMatches(@RequestBody Long leagueId) {
+    public List<Match> getLeagueMatches(@PathParam("id") Long leagueId) {
         return matchService.getLeagueMatches(leagueId);
     }
 
