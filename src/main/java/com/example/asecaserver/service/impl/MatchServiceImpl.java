@@ -11,21 +11,23 @@ import com.example.asecaserver.service.PlayerStatService;
 import com.example.asecaserver.service.TeamService;
 import com.example.asecaserver.service.TeamStatService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class MatchServiceImpl implements MatchService {
 
     private final MatchRepository repository;
-    private final LeagueService leagueService;
+    private final ObjectProvider<LeagueService> leagueService;
     private final TeamService teamService;
     private final TeamStatService teamStatService;
     private final PlayerStatService playerStatService;
 
-    public MatchServiceImpl(MatchRepository repository, LeagueService leagueService, TeamService teamService, TeamStatService teamStatService, PlayerStatService playerStatService) {
+    public MatchServiceImpl(MatchRepository repository, ObjectProvider<LeagueService> leagueService, TeamService teamService, TeamStatService teamStatService, PlayerStatService playerStatService) {
         this.repository = repository;
         this.leagueService = leagueService;
         this.teamService = teamService;
@@ -41,7 +43,7 @@ public class MatchServiceImpl implements MatchService {
         Match match = new Match();
         match.setLocalTeam(teamService.findById(matchDto.getLocalTeamId()));
         match.setAwayTeam(teamService.findById(matchDto.getAwayTeamId()));
-        match.setLeague(leagueService.findById(matchDto.getLeagueId()));
+        match.setLeague(Objects.requireNonNull(leagueService.getIfAvailable()).findById(matchDto.getLeagueId()));
         match.setDate(matchDto.getDate());
         if (matchAlreadyExists(match)) throw new Exception("This match already exists on this league");
         return repository.save(match);
@@ -53,6 +55,23 @@ public class MatchServiceImpl implements MatchService {
                 match.getAwayTeam().getId(),
                 match.getLeague().getId()
         ).isPresent();
+    }
+
+    public void addPoint(PointDto point) throws Exception {
+        Match match = findById(point.getMatchId());
+        if (!match.hasEnded()) {
+            League league = match.getLeague();
+            //Change match score
+            if (point.getTeamId().equals(match.getLocalTeam().getId())) {
+                match.setLocalScore(match.getLocalScore() + point.getScore());
+            } else if (point.getTeamId().equals(match.getAwayTeam().getId())) {
+                match.setAwayScore(match.getAwayScore() + point.getScore());
+            } else throw new Exception("Team that scored is not in match");
+            //Set player stat (score and assist)
+            playerStatService.addStatsToPlayer(point.getScoringPlayerId(), point.getScore(), point.getAssistPlayerId(), league);
+            repository.save(match);
+        }
+        else throw new Exception("Match does not exist or has already ended");
     }
 
     //add 1 game in local and away teams stats in this league
@@ -78,23 +97,6 @@ public class MatchServiceImpl implements MatchService {
 
             teamStatService.saveStat(localStats);
             teamStatService.saveStat(awayStats);
-        }
-        else throw new Exception("Match does not exist or has already ended");
-    }
-
-    public void addPoint(PointDto point) throws Exception {
-        Match match = findById(point.getMatchId());
-        if (!match.hasEnded()) {
-            League league = match.getLeague();
-            //Change match score
-            if (point.getTeamId().equals(match.getLocalTeam().getId())) {
-                match.setLocalScore(match.getLocalScore() + point.getScore());
-            } else if (point.getTeamId().equals(match.getAwayTeam().getId())) {
-                match.setAwayScore(match.getAwayScore() + point.getScore());
-            } else throw new Exception("Team that scored is not in match");
-            //Set player stat (score and assist)
-            playerStatService.addStatsToPlayer(point.getScoringPlayerId(), point.getScore(), point.getAssistPlayerId(), league);
-            repository.save(match);
         }
         else throw new Exception("Match does not exist or has already ended");
     }
