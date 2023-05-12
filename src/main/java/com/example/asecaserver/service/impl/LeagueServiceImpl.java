@@ -33,6 +33,7 @@ public class LeagueServiceImpl implements LeagueService {
     }
 
     public League addLeague(String leagueName, List<String> teamNames, Date startDate, Date finishDate) throws Exception {
+        validateDates(startDate, finishDate);
         List<Team> teams = teamService.saveTeamsAndPlayer(teamNames);
         League league = new League(leagueName);
         league.setTeams(teams);
@@ -45,5 +46,17 @@ public class LeagueServiceImpl implements LeagueService {
         League league = findById(leagueId);
         return league.getTeams();
     }
+
+    private void validateDates(Date startDate, Date finishDate) throws Exception {
+        Date date = new Date();
+        date.setHours(0);
+        date.setMinutes(0);
+        date.setSeconds(0);
+        startDate.setHours(1);
+        if (startDate.before(date) || finishDate.before(startDate)) {
+            throw new Exception("Invalid dates for creating league");
+        }
+    }
+
 
 }

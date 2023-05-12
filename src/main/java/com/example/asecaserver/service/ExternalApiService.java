@@ -11,6 +11,5 @@ import java.util.List;
 public interface ExternalApiService {
 
     void createMatches(List<Team> teams, Date startDate, Date finishDate, Long leagueId) throws Exception;
-    void validateDates(Date startDate, Date finishDate) throws Exception;
     HttpURLConnection createConnection(URL url) throws IOException;
 }

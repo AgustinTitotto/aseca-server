@@ -30,7 +30,6 @@ public class ExternalApiServiceImpl implements ExternalApiService {
 
     @Override
     public void createMatches(List<Team> teams, Date startDate, Date finishDate, Long leagueId) throws Exception {
-        validateDates(startDate, finishDate);
         Calendar start = Calendar.getInstance();
         start.setTime(startDate);
         Calendar finish = Calendar.getInstance();
@@ -61,18 +60,6 @@ public class ExternalApiServiceImpl implements ExternalApiService {
                 response.append(responseLine.trim());
             }
             Objects.requireNonNull(matchService).createMatches(response.toString(), leagueId);
-        }
-    }
-
-    @Override
-    public void validateDates(Date startDate, Date finishDate) throws Exception {
-        Date date = new Date();
-        date.setHours(0);
-        date.setMinutes(0);
-        date.setSeconds(0);
-        startDate.setHours(1);
-        if (startDate.before(date) || finishDate.before(startDate)) {
-            throw new Exception("Invalid dates for creating league");
         }
     }
 
