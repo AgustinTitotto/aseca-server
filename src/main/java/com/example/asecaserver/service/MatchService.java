@@ -1,7 +1,18 @@
 package com.example.asecaserver.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+
+import com.example.asecaserver.model.Match;
+import com.example.asecaserver.model.dtos.MatchDto;
+import com.example.asecaserver.model.dtos.PointDto;
+
+import java.util.List;
 
 public interface MatchService {
+
+    Match findById(Long id) throws Exception;
+    Match createMatch(MatchDto matchDto) throws Exception;
+    void addPoint(PointDto pointDto) throws Exception;
+    void endMatch(Long matchId, Integer localScore, Integer awayScore) throws Exception;
+    List<Match> getLeagueMatches(Long leagueId);
     void createMatches(String string, Long leagueId) throws Exception;
 }

@@ -27,10 +27,6 @@ public class PlayerStat {
         this.assists = 0;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public Integer getPoints2() {
         return points2;
     }

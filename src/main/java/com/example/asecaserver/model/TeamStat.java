@@ -34,10 +34,6 @@ public class TeamStat {
         this.winStreak = 0;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public void setTeam(Team team) {
         this.team = team;
     }

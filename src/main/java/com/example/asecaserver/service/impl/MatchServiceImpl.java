@@ -35,10 +35,12 @@ public class MatchServiceImpl implements MatchService {
         this.playerStatService = playerStatService;
     }
 
+    @Override
     public Match findById(Long id) throws Exception {
         return repository.findById(id).orElseThrow(() -> new Exception("No match exists with id: " + id));
     }
 
+    @Override
     public Match createMatch(MatchDto matchDto) throws Exception {
         Match match = new Match();
         match.setLocalTeam(teamService.findById(matchDto.getLocalTeamId()));
@@ -57,6 +59,7 @@ public class MatchServiceImpl implements MatchService {
         ).isPresent();
     }
 
+    @Override
     public void addPoint(PointDto point) throws Exception {
         Match match = findById(point.getMatchId());
         if (!match.hasEnded()) {
@@ -74,10 +77,7 @@ public class MatchServiceImpl implements MatchService {
         else throw new Exception("Match does not exist or has already ended");
     }
 
-    //add 1 game in local and away teams stats in this league
-    //add win and loss
-    //set winStreak
-    //set points in favour
+    @Override
     public void endMatch(Long matchId, Integer localScore, Integer awayScore) throws Exception {
         Match match = findById(matchId);
         if (!match.hasEnded()) {
@@ -99,6 +99,18 @@ public class MatchServiceImpl implements MatchService {
             teamStatService.saveStat(awayStats);
         }
         else throw new Exception("Match does not exist or has already ended");
+    }
+
+    private TeamStat getTeamStat(League league, Team local) {
+        TeamStat localStats;
+        try {
+            localStats = teamStatService.getStatByLeagueIdAndTeamId(league.getId(), local.getId());
+        } catch (Exception e) {
+            localStats = new TeamStat();
+            localStats.setTeam(local);
+            localStats.setLeague(league);
+        }
+        return localStats;
     }
 
     private static void setWinPercentage(TeamStat localStats, TeamStat awayStats) {
@@ -133,18 +145,7 @@ public class MatchServiceImpl implements MatchService {
         }
     }
 
-    private TeamStat getTeamStat(League league, Team local) {
-        TeamStat localStats;
-        try {
-            localStats = teamStatService.getStatByLeagueIdAndTeamId(league.getId(), local.getId());
-        } catch (Exception e) {
-            localStats = new TeamStat();
-            localStats.setTeam(local);
-            localStats.setLeague(league);
-        }
-        return localStats;
-    }
-
+    @Override
     public List<Match> getLeagueMatches(Long leagueId) {
         return repository.getByLeagueId(leagueId);
     }

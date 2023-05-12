@@ -24,14 +24,17 @@ public class LeagueServiceImpl implements LeagueService {
         this.externalApiService = externalApiService;
     }
 
+    @Override
     public List<League> findAll() {
         return repository.findAll();
     }
 
+    @Override
     public League findById(Long id) throws Exception {
         return repository.findById(id).orElseThrow(() -> new Exception("No league exists with id: " + id));
     }
 
+    @Override
     public League addLeague(String leagueName, List<String> teamNames, Date startDate, Date finishDate) throws Exception {
         validateDates(startDate, finishDate);
         List<Team> teams = teamService.saveTeamsAndPlayer(teamNames);
@@ -42,6 +45,7 @@ public class LeagueServiceImpl implements LeagueService {
         return savedLeague;
     }
 
+    @Override
     public List<Team> getTeams(Long leagueId) throws Exception {
         League league = findById(leagueId);
         return league.getTeams();
