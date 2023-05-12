@@ -11,7 +11,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.ObjectProvider;
 
+import java.util.Date;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -23,6 +25,8 @@ class MatchServiceImplTest {
     @Mock
     private MatchRepository matchRepository;
     @Mock
+    private ObjectProvider<LeagueService> leagueServiceObjectProvider;
+    @Mock
     private LeagueService leagueService;
     @Mock
     private TeamService teamService;
@@ -31,69 +35,73 @@ class MatchServiceImplTest {
     @Mock
     private PlayerStatService playerStatService;
 
-    private MatchServiceImpl underTest;
+    private MatchService underTest;
 
     @BeforeEach
     void setUp() {
-        underTest = new MatchServiceImpl(matchRepository, leagueService, teamService, teamStatService, playerStatService);
+        underTest = new MatchServiceImpl(matchRepository, leagueServiceObjectProvider, teamService, teamStatService, playerStatService);
     }
 
     @Test
     void shouldFindMatchById() throws Exception {
         //given
+        Long id = 1L;
         Match match = new Match();
-        when(matchRepository.findById(match.getId())).thenReturn(Optional.of(match));
+        when(matchRepository.findById(id)).thenReturn(Optional.of(match));
         //when
-        underTest.findById(match.getId());
+        underTest.findById(id);
         //then
-        verify(matchRepository).findById(match.getId());
+        verify(matchRepository).findById(id);
     }
 
     @Test
-    void shouldCheckForTeamsAndLeagueAndSaveMatch() throws Exception {
+    void shouldCheckForExistingMatchAndSaveMatch() throws Exception {
         //given
-        Long id1 = 1L;
-        Long id2 = 2L;
-        Long id3 = 3L;
         League league = new League();
+        Long id1 = 1L;
+        league.setId(id1);
         Team team1 = new Team();
         Team team2 = new Team();
-        league.setId(id1);
-        team1.setId(id2);
-        team2.setId(id3);
-        MatchDto matchDto = new MatchDto(team1.getId(), team2.getId(), league.getId());
+        Long team1Id = 1L;
+        Long team2Id = 2L;
+        team1.setId(team1Id);
+        team2.setId(team2Id);
+        MatchDto matchDto = new MatchDto(new Date(), team1.getId(), team2.getId(), league.getId());
         when(matchRepository.findByLocalTeamIdAndAwayTeamIdAndLeagueId(team1.getId(), team2.getId(), league.getId())).thenReturn(Optional.empty());
         when(teamService.findById(team1.getId())).thenReturn(team1);
         when(teamService.findById(team2.getId())).thenReturn(team2);
+        when(leagueServiceObjectProvider.getIfAvailable()).thenReturn(leagueService);
         when(leagueService.findById(league.getId())).thenReturn(league);
         //when
         underTest.createMatch(matchDto);
         //then
+        verify(matchRepository).findByLocalTeamIdAndAwayTeamIdAndLeagueId(team1.getId(), team2.getId(), league.getId());
         ArgumentCaptor<Match> matchArgumentCaptor = ArgumentCaptor.forClass(Match.class);
         verify(matchRepository).save(matchArgumentCaptor.capture());
-        verify(matchRepository).findByLocalTeamIdAndAwayTeamIdAndLeagueId(team1.getId(), team2.getId(), league.getId());
         assertThat(matchArgumentCaptor.getValue().getLocalTeam().getId()).isEqualTo(matchDto.getLocalTeamId());
+        assertThat(matchArgumentCaptor.getValue().getAwayTeam().getId()).isEqualTo(matchDto.getAwayTeamId());
+        assertThat(matchArgumentCaptor.getValue().getLeague().getId()).isEqualTo(matchDto.getLeagueId());
     }
 
     @Test
-    void shouldAddPlayerStatAndAddPoint() throws Exception {
+    void shouldAddPointsAndPlayerStats() throws Exception {
         //given
-        Long id1 = 1L;
-        Long id2 = 2L;
-        Long id3 = 3L;
         League league = new League();
+        Long id1 = 1L;
+        league.setId(id1);
         Team team1 = new Team();
         Team team2 = new Team();
-        league.setId(id1);
-        team1.setId(id2);
-        team2.setId(id3);
+        Long team1Id = 1L;
+        Long team2Id = 2L;
+        team1.setId(team1Id);
+        team2.setId(team2Id);
         Match match = new Match(team1, team2, league);
         match.setId(1L);
         match.setHasEnded(false);
-        PointDto pointDto = new PointDto(match.getId(), match.getLocalTeam().getId(), 1L, 2, 2L);
-        when(matchRepository.findById(1L)).thenReturn(Optional.of(match));
+        PointDto pointDto1 = new PointDto(match.getId(), match.getLocalTeam().getId(), 1L, 2, 2L);
+        when(matchRepository.findById(match.getId())).thenReturn(Optional.of(match));
         //when
-        underTest.addPoint(pointDto);
+        underTest.addPoint(pointDto1);
         //then
         verify(playerStatService).addStatsToPlayer(1L, 2, 2L, match.getLeague());
         ArgumentCaptor<Match> argumentCaptor = ArgumentCaptor.forClass(Match.class);
@@ -104,19 +112,19 @@ class MatchServiceImplTest {
     @Test
     void shouldEndMatchAndAddTeamStat() throws Exception {
         //given
-        Long id1 = 1L;
-        Long id2 = 2L;
-        Long id3 = 3L;
         League league = new League();
+        Long id1 = 1L;
+        league.setId(id1);
         Team team1 = new Team();
         Team team2 = new Team();
-        league.setId(id1);
-        team1.setId(id2);
-        team2.setId(id3);
+        Long team1Id = 1L;
+        Long team2Id = 2L;
+        team1.setId(team1Id);
+        team2.setId(team2Id);
         Match match = new Match(team1, team2, league);
         match.setId(1L);
         match.setHasEnded(false);
-        when(matchRepository.findById(1L)).thenReturn(Optional.of(match));
+        when(matchRepository.findById(match.getId())).thenReturn(Optional.of(match));
         when(teamStatService.getStatByLeagueIdAndTeamId(league.getId(), team1.getId())).thenThrow(new Exception());
         when(teamStatService.getStatByLeagueIdAndTeamId(league.getId(), team2.getId())).thenThrow(new Exception());
         //when
@@ -125,7 +133,17 @@ class MatchServiceImplTest {
         ArgumentCaptor<Match> argumentCaptor = ArgumentCaptor.forClass(Match.class);
         verify(matchRepository).save(argumentCaptor.capture());
         assertThat(argumentCaptor.getValue().hasEnded()).isEqualTo(true);
-        verify(teamStatService).saveStat(teamStatService.getStatByLeagueIdAndTeamId(league.getId(), team1.getId()));
-        verify(teamStatService).saveStat(teamStatService.getStatByLeagueIdAndTeamId(league.getId(), team2.getId()));
+        ArgumentCaptor<TeamStat> argumentCaptor1 = ArgumentCaptor.forClass(TeamStat.class);
+        verify(teamStatService, times(2)).saveStat(argumentCaptor1.capture());
+        assertThat(argumentCaptor1.getAllValues().get(0).getMatchesPlayed()).isEqualTo(1);
+        assertThat(argumentCaptor1.getAllValues().get(0).getWins()).isEqualTo(0);
+        assertThat(argumentCaptor1.getAllValues().get(0).getLosses()).isEqualTo(1);
+        assertThat(argumentCaptor1.getAllValues().get(0).getPointInFavour()).isEqualTo(-4);
+        assertThat(argumentCaptor1.getAllValues().get(0).getWinStreak()).isEqualTo(0);
+        assertThat(argumentCaptor1.getAllValues().get(1).getMatchesPlayed()).isEqualTo(1);
+        assertThat(argumentCaptor1.getAllValues().get(1).getWins()).isEqualTo(1);
+        assertThat(argumentCaptor1.getAllValues().get(1).getLosses()).isEqualTo(0);
+        assertThat(argumentCaptor1.getAllValues().get(1).getPointInFavour()).isEqualTo(4);
+        assertThat(argumentCaptor1.getAllValues().get(1).getWinStreak()).isEqualTo(1);
     }
 }

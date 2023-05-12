@@ -4,18 +4,18 @@ import com.example.asecaserver.model.League;
 import com.example.asecaserver.model.Team;
 import com.example.asecaserver.model.dtos.CreateLeagueDto;
 import com.example.asecaserver.repository.LeagueRepository;
-import com.example.asecaserver.service.PlayerService;
+import com.example.asecaserver.service.ExternalApiService;
+import com.example.asecaserver.service.LeagueService;
 import com.example.asecaserver.service.TeamService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.verify;
@@ -29,13 +29,13 @@ class LeagueServiceImplTest {
     @Mock
     private TeamService teamService;
     @Mock
-    private PlayerService playerService;
+    private ExternalApiService externalApiService;
 
-    private LeagueServiceImpl underTest;
+    private LeagueService underTest;
 
     @BeforeEach
     void setUp() {
-        underTest = new LeagueServiceImpl(leagueRepository, teamService, playerService);
+        underTest = new LeagueServiceImpl(leagueRepository, teamService, externalApiService);
     }
 
     @Test
@@ -59,27 +59,28 @@ class LeagueServiceImplTest {
         //when
         underTest.findById(id);
         //then
-        ArgumentCaptor<Long> argumentCaptor = ArgumentCaptor.forClass(Long.class);
-        verify(leagueRepository).findById(argumentCaptor.capture());
-        assertThat(argumentCaptor.getValue()).isEqualTo(id);
+        verify(leagueRepository).findById(id);
     }
 
     @Test
-    void shouldSaveLeague() {
+    void shouldSaveLeague() throws Exception {
         //given
         League league = new League("NBA");
-        String leagueName = league.getLeagueName();
-        String team1 = "team1";
-        String team2 = "team2";
-        List<Team> teams = Arrays.asList(new Team(team1), new Team(team2));
-        CreateLeagueDto createLeagueDto = new CreateLeagueDto(leagueName, Arrays.asList(team1, team2));
+        league.setId(1L);
+        Team team1 = new Team("team1");
+        Team team2 = new Team("team2");
+        team1.setId(1L);
+        team2.setId(2L);
+        List<Team> teams = Arrays.asList(team1, team2);
+        CreateLeagueDto createLeagueDto = new CreateLeagueDto(league.getLeagueName(), Arrays.asList(team1.getTeamName(), team2.getTeamName()), new Date(2026, Calendar.OCTOBER, 10), new Date(2026, Calendar.NOVEMBER, 10));
+        when(teamService.saveTeamsAndPlayer(Arrays.asList(team1.getTeamName(), team2.getTeamName()))).thenReturn(teams);
+        when(leagueRepository.save(ArgumentMatchers.any(League.class))).thenReturn(league);
         //when
-        underTest.addLeague(createLeagueDto.getLeague(), createLeagueDto.getTeams());
+        underTest.addLeague(createLeagueDto.getLeagueName(), createLeagueDto.getTeams(), createLeagueDto.getStartDate(), createLeagueDto.getFinishDate());
         //then
         ArgumentCaptor<League> argumentCaptor = ArgumentCaptor.forClass(League.class);
         verify(leagueRepository).save(argumentCaptor.capture());
-        assertThat(argumentCaptor.getValue().getLeagueName()).isEqualTo(leagueName);
-        assertThat(argumentCaptor.getValue().getTeams().size()).isEqualTo(teams.size());
-        assertThat(argumentCaptor.getValue().getTeams().get(0).getPlayers().size()).isEqualTo(12);
+        assertThat(argumentCaptor.getValue().getLeagueName()).isEqualTo(league.getLeagueName());
+        assertThat(argumentCaptor.getValue().getTeams().size()).isEqualTo(2);
     }
 }
