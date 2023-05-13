@@ -85,4 +85,20 @@ public class TeamStat {
     public void setWinPercentage(Double winPercentage) {
         this.winPercentage = winPercentage;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public League getLeague() {
+        return league;
+    }
+
+    public Double getWinPercentage() {
+        return winPercentage;
+    }
 }

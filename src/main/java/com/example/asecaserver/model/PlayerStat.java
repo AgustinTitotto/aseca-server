@@ -66,4 +66,16 @@ public class PlayerStat {
     public void setLeague(League league) {
         this.league = league;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public League getLeague() {
+        return league;
+    }
 }
