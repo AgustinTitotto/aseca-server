@@ -35,7 +35,7 @@ public class TeamController {
 //    }
 
     @GetMapping("/getPlayers")
-    public List<Player> getPlayers(@RequestBody Long teamId) throws Exception {
+    public List<Player> getPlayers(@PathParam("id") Long teamId) throws Exception {
         return teamService.getPlayers(teamId);
     }
 

@@ -3,6 +3,7 @@ package com.example.asecaserver.controller;
 
 import com.example.asecaserver.model.TeamStat;
 import com.example.asecaserver.service.impl.TeamStatServiceImpl;
+import jakarta.websocket.server.PathParam;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +24,7 @@ public class TeamStatController {
     }
 
     @GetMapping("/get")
-    public List<TeamStat> getLeagueTable(@RequestBody Long leagueId) {
+    public List<TeamStat> getLeagueTable(@PathParam("id") Long leagueId) {
         return teamStatService.getLeagueTable(leagueId);
     }
 }

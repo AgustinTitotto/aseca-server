@@ -3,6 +3,7 @@ package com.example.asecaserver.controller;
 
 import com.example.asecaserver.model.PlayerStat;
 import com.example.asecaserver.service.impl.PlayerStatServiceImpl;
+import jakarta.websocket.server.PathParam;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,7 +22,7 @@ public class PlayerStatController {
     }
 
     @GetMapping("/getStat")
-    public PlayerStat getPlayerStat(@RequestBody Long playerId) throws Exception {
+    public PlayerStat getPlayerStat(@PathParam("id") Long playerId) throws Exception {
         return playerStatService.getPlayerStatById(playerId);
     }
 }
