@@ -22,19 +22,19 @@ public class MatchController {
         this.matchService = matchServiceImpl;
     }
 
-    @PostMapping("/create")
-    public Match createMatch(@RequestBody MatchDto matchDto) throws Exception{
-        return matchService.createMatch(matchDto);
-    }
+//    @PostMapping("/create")
+//    public Match createMatch(@RequestBody MatchDto matchDto) throws Exception{
+//        return matchService.createMatch(matchDto);
+//    }
 
     @PostMapping("/addPoint")
-    public void addPoint(@RequestBody PointDto point) throws Exception {
-        matchService.addPoint(point);
+    public Match addPoint(@RequestBody PointDto point) throws Exception {
+        return matchService.addPoint(point);
     }
 
     @PostMapping("/end")
     public void endMatch(@RequestBody EndMatchDto endMatchDto) throws Exception {
-        matchService.endMatch(endMatchDto.getMatchId(), endMatchDto.getLocalScore(), endMatchDto.getAwayScore());
+        matchService.endMatch(endMatchDto.getMatchId());
     }
 
     @GetMapping("/leagueMatches")

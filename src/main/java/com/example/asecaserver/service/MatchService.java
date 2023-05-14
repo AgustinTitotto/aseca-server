@@ -11,8 +11,8 @@ public interface MatchService {
 
     Match findById(Long id) throws Exception;
     Match createMatch(MatchDto matchDto) throws Exception;
-    void addPoint(PointDto pointDto) throws Exception;
-    void endMatch(Long matchId, Integer localScore, Integer awayScore) throws Exception;
+    Match addPoint(PointDto pointDto) throws Exception;
+    void endMatch(Long matchId) throws Exception;
     List<Match> getLeagueMatches(Long leagueId);
     void createMatches(String string, Long leagueId) throws Exception;
 }

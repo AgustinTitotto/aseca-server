@@ -1,6 +1,5 @@
 package com.example.asecaserver.model.dtos;
 
-import java.util.List;
 
 public class EndMatchDto {
 

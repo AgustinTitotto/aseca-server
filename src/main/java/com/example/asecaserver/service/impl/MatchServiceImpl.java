@@ -60,7 +60,7 @@ public class MatchServiceImpl implements MatchService {
     }
 
     @Override
-    public void addPoint(PointDto point) throws Exception {
+    public Match addPoint(PointDto point) throws Exception {
         Match match = findById(point.getMatchId());
         if (!match.hasEnded()) {
             League league = match.getLeague();
@@ -72,13 +72,13 @@ public class MatchServiceImpl implements MatchService {
             } else throw new Exception("Team that scored is not in match");
             //Set player stat (score and assist)
             playerStatService.addStatsToPlayer(point.getScoringPlayerId(), point.getScore(), point.getAssistPlayerId(), league);
-            repository.save(match);
+            return repository.save(match);
         }
         else throw new Exception("Match does not exist or has already ended");
     }
 
     @Override
-    public void endMatch(Long matchId, Integer localScore, Integer awayScore) throws Exception {
+    public void endMatch(Long matchId) throws Exception {
         Match match = findById(matchId);
         if (!match.hasEnded()) {
             League league = match.getLeague();
@@ -91,8 +91,8 @@ public class MatchServiceImpl implements MatchService {
             repository.save(match);
 
             addOneGameToTeams(localStats, awayStats);
-            setWinLossAndWinStreak(localScore, awayScore, localStats, awayStats);
-            setPointInFavour(localScore, awayScore, localStats, awayStats);
+            setWinLossAndWinStreak(match.getLocalScore(), match.getAwayScore(), localStats, awayStats);
+            setPointInFavour(match.getLocalScore(), match.getAwayScore(), localStats, awayStats);
             setWinPercentage(localStats, awayStats);
 
             teamStatService.saveStat(localStats);
