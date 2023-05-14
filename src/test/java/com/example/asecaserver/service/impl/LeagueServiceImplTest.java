@@ -7,6 +7,7 @@ import com.example.asecaserver.repository.LeagueRepository;
 import com.example.asecaserver.service.ExternalApiService;
 import com.example.asecaserver.service.LeagueService;
 import com.example.asecaserver.service.TeamService;
+import com.example.asecaserver.service.TeamStatService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,12 +31,14 @@ class LeagueServiceImplTest {
     private TeamService teamService;
     @Mock
     private ExternalApiService externalApiService;
+    @Mock
+    private TeamStatService teamStatService;
 
     private LeagueService underTest;
 
     @BeforeEach
     void setUp() {
-        underTest = new LeagueServiceImpl(leagueRepository, teamService, externalApiService);
+        underTest = new LeagueServiceImpl(leagueRepository, teamService, externalApiService, teamStatService);
     }
 
     @Test

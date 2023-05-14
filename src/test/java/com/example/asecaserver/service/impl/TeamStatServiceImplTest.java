@@ -1,7 +1,9 @@
 package com.example.asecaserver.service.impl;
 
+import com.example.asecaserver.model.PlayerStat;
 import com.example.asecaserver.model.TeamStat;
 import com.example.asecaserver.repository.TeamStatRepository;
+import com.example.asecaserver.service.PlayerStatService;
 import com.example.asecaserver.service.TeamStatService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,12 +21,14 @@ class TeamStatServiceImplTest {
 
     @Mock
     private TeamStatRepository teamStatRepository;
+    @Mock
+    private PlayerStatService playerStatService;
 
     private TeamStatService underTest;
 
     @BeforeEach
     void setUp() {
-        underTest = new TeamStatServiceImpl(teamStatRepository);
+        underTest = new TeamStatServiceImpl(teamStatRepository, playerStatService);
     }
 
     @Test

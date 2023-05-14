@@ -124,11 +124,13 @@ class MatchServiceImplTest {
         Match match = new Match(team1, team2, league);
         match.setId(1L);
         match.setHasEnded(false);
+        match.setLocalScore(26);
+        match.setAwayScore(30);
         when(matchRepository.findById(match.getId())).thenReturn(Optional.of(match));
         when(teamStatService.getStatByLeagueIdAndTeamId(league.getId(), team1.getId())).thenThrow(new Exception());
         when(teamStatService.getStatByLeagueIdAndTeamId(league.getId(), team2.getId())).thenThrow(new Exception());
         //when
-        underTest.endMatch(match.getId(), 26, 30);
+        underTest.endMatch(match.getId());
         //then
         ArgumentCaptor<Match> argumentCaptor = ArgumentCaptor.forClass(Match.class);
         verify(matchRepository).save(argumentCaptor.capture());
