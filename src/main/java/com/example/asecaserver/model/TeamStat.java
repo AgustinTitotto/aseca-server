@@ -30,6 +30,7 @@ public class TeamStat {
         this.matchesPlayed = 0;
         this.wins = 0;
         this.losses = 0;
+        this.winPercentage = 0.0;
         this.pointInFavour = 0;
         this.winStreak = 0;
     }

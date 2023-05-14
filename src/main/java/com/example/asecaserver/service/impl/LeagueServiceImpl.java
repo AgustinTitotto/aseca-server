@@ -3,9 +3,7 @@ package com.example.asecaserver.service.impl;
 import com.example.asecaserver.model.League;
 import com.example.asecaserver.repository.LeagueRepository;
 import com.example.asecaserver.model.Team;
-import com.example.asecaserver.service.ExternalApiService;
-import com.example.asecaserver.service.LeagueService;
-import com.example.asecaserver.service.TeamService;
+import com.example.asecaserver.service.*;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -16,12 +14,14 @@ public class LeagueServiceImpl implements LeagueService {
     private final LeagueRepository repository;
     private final TeamService teamService;
     private final ExternalApiService externalApiService;
+    private final TeamStatService teamStatService;
 
 
-    public LeagueServiceImpl(LeagueRepository repository, TeamService teamService, ExternalApiService externalApiService) {
+    public LeagueServiceImpl(LeagueRepository repository, TeamService teamService, ExternalApiService externalApiService, TeamStatService teamStatService) {
         this.repository = repository;
         this.teamService = teamService;
         this.externalApiService = externalApiService;
+        this.teamStatService = teamStatService;
     }
 
     @Override
@@ -37,11 +37,13 @@ public class LeagueServiceImpl implements LeagueService {
     @Override
     public League addLeague(String leagueName, List<String> teamNames, Date startDate, Date finishDate) throws Exception {
         validateDates(startDate, finishDate);
+        checkTeamSize(teamNames);
         List<Team> teams = teamService.saveTeamsAndPlayer(teamNames);
         League league = new League(leagueName);
         league.setTeams(teams);
         League savedLeague =  repository.save(league);
         externalApiService.createMatches(teams, startDate, finishDate, savedLeague.getId());
+        teamStatService.createTeamAndPlayerStats(teams, league);
         return savedLeague;
     }
 
@@ -62,5 +64,10 @@ public class LeagueServiceImpl implements LeagueService {
         }
     }
 
+    private void checkTeamSize(List<String> teamNames) throws Exception {
+        if (teamNames.size() % 2 != 0) {
+            throw new Exception("number of teams must bee even");
+        }
+    }
 
 }

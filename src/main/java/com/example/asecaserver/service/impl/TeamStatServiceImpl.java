@@ -1,7 +1,10 @@
 package com.example.asecaserver.service.impl;
 
+import com.example.asecaserver.model.League;
+import com.example.asecaserver.model.Team;
 import com.example.asecaserver.model.TeamStat;
 import com.example.asecaserver.repository.TeamStatRepository;
+import com.example.asecaserver.service.PlayerStatService;
 import com.example.asecaserver.service.TeamStatService;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +15,11 @@ import java.util.Optional;
 public class TeamStatServiceImpl implements TeamStatService {
 
     private final TeamStatRepository repository;
+    private final PlayerStatService playerStatService;
 
-    public TeamStatServiceImpl(TeamStatRepository repository) {
+    public TeamStatServiceImpl(TeamStatRepository repository, PlayerStatService playerStatService) {
         this.repository = repository;
+        this.playerStatService = playerStatService;
     }
 
     public TeamStat getStatByLeagueIdAndTeamId(Long id, Long id1) throws Exception {
@@ -27,5 +32,16 @@ public class TeamStatServiceImpl implements TeamStatService {
 
     public List<TeamStat> getLeagueTable(Long leagueId) {
         return repository.findAllByLeagueId(leagueId);
+    }
+
+    @Override
+    public void createTeamAndPlayerStats(List<Team> teams, League league) {
+        for (Team team : teams) {
+            TeamStat teamStat = new TeamStat();
+            teamStat.setTeam(team);
+            teamStat.setLeague(league);
+            repository.save(teamStat);
+            playerStatService.createPlayerStat(team.getPlayers(), league);
+        }
     }
 }

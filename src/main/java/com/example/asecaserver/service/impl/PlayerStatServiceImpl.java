@@ -1,11 +1,14 @@
 package com.example.asecaserver.service.impl;
 
 import com.example.asecaserver.model.League;
+import com.example.asecaserver.model.Player;
 import com.example.asecaserver.model.PlayerStat;
 import com.example.asecaserver.repository.PlayerStatRepository;
 import com.example.asecaserver.service.PlayerService;
 import com.example.asecaserver.service.PlayerStatService;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class PlayerStatServiceImpl implements PlayerStatService {
@@ -21,6 +24,16 @@ public class PlayerStatServiceImpl implements PlayerStatService {
     @Override
     public PlayerStat getPlayerStatById(Long playerId) throws Exception {
         return repository.findByPlayerId(playerId).orElseThrow(() -> new Exception("No player stat exists with player id: " + playerId));
+    }
+
+    @Override
+    public void createPlayerStat(List<Player> players, League league) {
+        for (Player player: players) {
+            PlayerStat playerStat = new PlayerStat();
+            playerStat.setLeague(league);
+            playerStat.setPlayer(player);
+            repository.save(playerStat);
+        }
     }
 
     @Override
