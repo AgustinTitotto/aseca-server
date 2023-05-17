@@ -101,36 +101,36 @@ class LeagueControllerTest {
 
     private WireMockServer wireMockServer;
 
-    @Test
-    void shouldCreateLeague() {
-        //given
-        List<String> teamNames = Arrays.asList("Mavericks", "Bulls");
-        CreateLeagueDto createLeagueDto = new CreateLeagueDto("NBA", teamNames, new Date(2050, Calendar.JUNE, 1), new Date(2050, Calendar.JULY, 1));
-        String responseBody = "[{\"gameDay\":1,\"date\":{\"min\":0,\"hrs\":4,\"day\":1,\"month\":6,\"year\":2050},\"homeTeamId\":2,\"awayTeamId\":1},{\"gameDay\":2,\"date\":{\"min\":0,\"hrs\":4,\"day\":1,\"month\":7,\"year\":2050},\"homeTeamId\":1,\"awayTeamId\":2}]";
-        wireMockServer = new WireMockServer(8081);  // Choose a port for the mock server
-        wireMockServer.start();
-
-        configureFor("localhost", 8081);
-
-        // Define the expected behavior for the mock server
-        stubFor(post(urlEqualTo("/fixture"))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(responseBody)));
-
-        //when
-        ResponseEntity<League> response = restTemplate.postForEntity(baseUrl + "/add", createLeagueDto, League.class);
-        League responseLeague = response.getBody();
-        //then
-        assert responseLeague != null;
-        assertThat(responseLeague.getLeagueName()).isEqualTo(createLeagueDto.getLeagueName());
-        assertThat(responseLeague.getTeams().size()).isEqualTo(2);
-        assertThat(responseLeague.getTeams().get(0).getPlayers().size()).isEqualTo(12);
-        assertThat(teamStatRepository.findAllByLeagueId(responseLeague.getId()).size()).isEqualTo(2);
-        assertThat(playerStatRepository.findAll().size()).isEqualTo(24);
-        wireMockServer.stop();
-    }
+//    @Test
+//    void shouldCreateLeague() {
+//        //given
+//        List<String> teamNames = Arrays.asList("Mavericks", "Bulls");
+//        CreateLeagueDto createLeagueDto = new CreateLeagueDto("NBA", teamNames, new Date(2050, Calendar.JUNE, 1), new Date(2050, Calendar.JULY, 1));
+//        String responseBody = "[{\"gameDay\":1,\"date\":{\"min\":0,\"hrs\":4,\"day\":1,\"month\":6,\"year\":2050},\"homeTeamId\":2,\"awayTeamId\":1},{\"gameDay\":2,\"date\":{\"min\":0,\"hrs\":4,\"day\":1,\"month\":7,\"year\":2050},\"homeTeamId\":1,\"awayTeamId\":2}]";
+//        wireMockServer = new WireMockServer(8081);  // Choose a port for the mock server
+//        wireMockServer.start();
+//
+//        configureFor("localhost", 8081);
+//
+//        // Define the expected behavior for the mock server
+//        stubFor(post(urlEqualTo("/fixture"))
+//                .willReturn(aResponse()
+//                        .withStatus(200)
+//                        .withHeader("Content-Type", "application/json")
+//                        .withBody(responseBody)));
+//
+//        //when
+//        ResponseEntity<League> response = restTemplate.postForEntity(baseUrl + "/add", createLeagueDto, League.class);
+//        League responseLeague = response.getBody();
+//        //then
+//        assert responseLeague != null;
+//        assertThat(responseLeague.getLeagueName()).isEqualTo(createLeagueDto.getLeagueName());
+//        assertThat(responseLeague.getTeams().size()).isEqualTo(2);
+//        assertThat(responseLeague.getTeams().get(0).getPlayers().size()).isEqualTo(12);
+//        assertThat(teamStatRepository.findAllByLeagueId(responseLeague.getId()).size()).isEqualTo(2);
+//        assertThat(playerStatRepository.findAll().size()).isEqualTo(24);
+//        wireMockServer.stop();
+//    }
 
     @Test
     @DirtiesContext

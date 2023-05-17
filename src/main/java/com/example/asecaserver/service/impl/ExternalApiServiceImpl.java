@@ -34,7 +34,7 @@ public class ExternalApiServiceImpl implements ExternalApiService {
         start.setTime(startDate);
         Calendar finish = Calendar.getInstance();
         finish.setTime(finishDate);
-        URL url = new URL("http://localhost:8081/fixture");
+        URL url = new URL("http://external-api:8081/fixture");
         HttpURLConnection con = createConnection(url);
         con.setRequestMethod("POST");
         con.setRequestProperty("Content-Type", "application/json");
