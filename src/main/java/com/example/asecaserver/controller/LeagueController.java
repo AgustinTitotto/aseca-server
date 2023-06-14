@@ -2,6 +2,7 @@ package com.example.asecaserver.controller;
 
 import com.example.asecaserver.model.Team;
 import com.example.asecaserver.model.dtos.CreateLeagueDto;
+import com.example.asecaserver.service.LeagueService;
 import com.example.asecaserver.service.impl.LeagueServiceImpl;
 import com.example.asecaserver.model.League;
 import jakarta.websocket.server.PathParam;
@@ -14,9 +15,9 @@ import java.util.List;
 @RequestMapping("/league")
 public class LeagueController {
 
-    private final LeagueServiceImpl leagueService;
+    private final LeagueService leagueService;
 
-    public LeagueController(LeagueServiceImpl leagueService) {
+    public LeagueController(LeagueService leagueService) {
         this.leagueService = leagueService;
 
     }
